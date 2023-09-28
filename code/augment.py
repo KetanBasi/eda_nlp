@@ -49,6 +49,12 @@ ap.add_argument(
     default=0,
 )
 ap.add_argument(
+    "-g",
+    "--gen_only",
+    required=False,
+    action="store_true",
+)
+ap.add_argument(
     "-n",
     "--num_aug",
     required=False,
@@ -112,6 +118,7 @@ def gen_eda(
     alpha_rd: float,
     num_aug: Union[int, float] = 9,
     skip_lines: int = 0,
+    gen_only: bool = False,
 ):
     """
     Generate more data with standard augmentation.
@@ -126,9 +133,10 @@ def gen_eda(
         alpha_rs (float): percent of words in each sentence to be swapped (0 <= alpha_sr <= 1).
         alpha_rd (float): percent of words in each sentence to be deleted (0 <= alpha_sr <= 1).
         num_aug (int or float, optional): number of augmented sentences per original sentence. Defaults to 9.
+        skip_lines (int, optional): number of rows to skip in the input file. Defaults to 0.
+        gen_only (bool, optional): if True, only return the generated sentences. Defaults to False.
     """
     with open(output_file, "w") as file_out, open(train_orig, "r") as file_source:
-
         # ? Skip header if any and just copy it to output file
         for _ in range(skip_lines):
             file_out.write(next(file_source))
@@ -146,6 +154,7 @@ def gen_eda(
                 alpha_rs=alpha_rs,
                 alpha_rd=alpha_rd,
                 num_aug=num_aug,
+                gen_only=gen_only,
             )
             file_buf = "".join(
                 label + separator + aug_sentence + "\n"
@@ -176,6 +185,7 @@ if __name__ == "__main__":
             alpha_rd=args.alpha_rd,
             num_aug=args.num_aug,
             skip_lines=args.skiprows,
+            gen_only=args.gen_only,
         )
     except KeyboardInterrupt:
         print("\nKeyboardInterrupt")

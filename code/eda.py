@@ -291,6 +291,7 @@ def eda(
     alpha_rs: float = 0.1,
     alpha_rd: float = 0.1,
     randomize: bool = False,
+    gen_only: bool = False,
 ) -> list:
     """
     Perform EDA on sentence.
@@ -304,6 +305,7 @@ def eda(
         alpha_rs (float): percent of words in each sentence to be swapped (0 <= alpha_sr <= 1).
         alpha_rd (float): percent of words in each sentence to be deleted (0 <= alpha_sr <= 1).
         randomize (bool): whether to shuffle the augmented sentences (default: False).
+        gen_only (bool): whether to return only the augmented sentences (default: False).
 
     Returns:
         augmented_sentences (list): list of augmented sentences.
@@ -318,7 +320,7 @@ def eda(
 
     # ? If cleaned sentence is empty, simply return the original sentence
     if num_words == 0:
-        return [sentence]
+        return []
 
     num_new_per_technique = get_num_per_technique(
         num_aug, flags=[alpha_sr, alpha_ri, alpha_rs, alpha_rd]
@@ -377,4 +379,7 @@ def eda(
 
     # append the original sentence
     # augmented_sentences.append(sentence)
-    return [sentence] + augmented_sentences
+    if gen_only:
+        return augmented_sentences
+    else:
+        return [sentence] + augmented_sentences
